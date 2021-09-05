@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import networkx
+from typing import Tuple
 from networkx import MultiDiGraph
 import cfpq_data
 
@@ -34,7 +35,7 @@ def get_info(graph: MultiDiGraph) -> GraphInfo:
 
 
 def create_labeled_two_cycles_graph(
-    size_of_first_cycle: int, size_of_second_cycle: int, edge_labels: tuple[str, str]
+    size_of_first_cycle: int, size_of_second_cycle: int, edge_labels: Tuple[str, str]
 ) -> MultiDiGraph:
     return cfpq_data.labeled_two_cycles_graph(
         size_of_first_cycle,
