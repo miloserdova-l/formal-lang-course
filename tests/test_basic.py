@@ -32,7 +32,8 @@ def test_create_labeled_two_cycles_graph():
 
 def test_save_graph_to_file():
     g = create_labeled_two_cycles_graph(42, 29, edge_labels=("c", "d"))
-    save_graph_to_file(g, os.sep.join(["output", "my-graph"]))
+    save_graph_to_file(g, os.sep.join(["..", "output", "my-graph"]))
     assert filecmp.cmp(
-        os.sep.join(["output", "my-graph"]), os.sep.join(["output", "exp-graph"])
+        os.sep.join(["..", "output", "my-graph"]),
+        os.sep.join(["..", "output", "exp-graph"]),
     )
