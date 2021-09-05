@@ -7,6 +7,6 @@ from project.graph_utils import (
 )
 
 if __name__ == "__main__":
-    g = create_labeled_two_cycles_graph(42, 29, edge_labels=("c", "d"))
-    save_graph_to_file(g, os.sep.join(["..", "output", "exp-graph"]))
+    g = create_labeled_two_cycles_graph(3, 5, edge_labels=("c", "d"))
+    save_graph_to_file(g, os.sep.join(["..", "output", "graph"]))
     print(get_info(g))

@@ -5,6 +5,8 @@ import networkx
 import networkx.algorithms.isomorphism as iso
 from project import *
 
+root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 
 def test_graph_info():
     g = cfpq_data.labeled_two_cycles_graph(
@@ -31,9 +33,10 @@ def test_create_labeled_two_cycles_graph():
 
 
 def test_save_graph_to_file():
+    print(root_path)
     g = create_labeled_two_cycles_graph(42, 29, edge_labels=("c", "d"))
-    save_graph_to_file(g, os.sep.join(["..", "output", "my-graph"]))
+    save_graph_to_file(g, os.sep.join([root_path, "output", "my-graph"]))
     assert filecmp.cmp(
-        os.sep.join(["..", "output", "my-graph"]),
-        os.sep.join(["..", "output", "exp-graph"]),
+        os.sep.join([root_path, "output", "my-graph"]),
+        os.sep.join([root_path, "output", "exp-graph"]),
     )
