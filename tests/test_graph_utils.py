@@ -50,28 +50,21 @@ def test_regex_to_min_dfa():
     regex = "abc|d"
 
     exp_dfa = DeterministicFiniteAutomaton()
+
     state0 = State(0)
     state1 = State(1)
     state2 = State(2)
     state3 = State(3)
-    state4 = State(4)
-
-    a = Symbol("a")
-    b = Symbol("b")
-    c = Symbol("c")
-    d = Symbol("d")
 
     exp_dfa.add_start_state(state0)
-
     exp_dfa.add_final_state(state3)
-    exp_dfa.add_final_state(state4)
 
-    exp_dfa.add_transition(state0, a, state1)
-    exp_dfa.add_transition(state1, b, state2)
-    exp_dfa.add_transition(state2, c, state3)
-    exp_dfa.add_transition(state0, d, state4)
+    exp_dfa.add_transition(state0, Symbol("a"), state1)
+    exp_dfa.add_transition(state1, Symbol("b"), state2)
+    exp_dfa.add_transition(state2, Symbol("c"), state3)
+    exp_dfa.add_transition(state0, Symbol("d"), state3)
 
     dfa = regex_to_min_dfa(regex)
     assert dfa.is_equivalent_to(exp_dfa)
     assert dfa.is_deterministic()
-    assert dfa.is_equivalent_to(dfa.minimize())
+    assert len(dfa.states) == 4
