@@ -1,10 +1,14 @@
-import os
 import filecmp
+import os
+
 import cfpq_data
 import networkx
 import networkx.algorithms.isomorphism as iso
+from pyformlang.finite_automaton import DeterministicFiniteAutomaton
+from pyformlang.finite_automaton import State
+from pyformlang.finite_automaton import Symbol
+
 from project import *
-from pyformlang.regular_expression import PythonRegex
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -44,7 +48,30 @@ def test_save_graph_to_file():
 
 def test_regex_to_min_dfa():
     regex = "abc|d"
+
+    exp_dfa = DeterministicFiniteAutomaton()
+    state0 = State(0)
+    state1 = State(1)
+    state2 = State(2)
+    state3 = State(3)
+    state4 = State(4)
+
+    a = Symbol("a")
+    b = Symbol("b")
+    c = Symbol("c")
+    d = Symbol("d")
+
+    exp_dfa.add_start_state(state0)
+
+    exp_dfa.add_final_state(state3)
+    exp_dfa.add_final_state(state4)
+
+    exp_dfa.add_transition(state0, a, state1)
+    exp_dfa.add_transition(state1, b, state2)
+    exp_dfa.add_transition(state2, c, state3)
+    exp_dfa.add_transition(state0, d, state4)
+
     dfa = regex_to_min_dfa(regex)
-    assert dfa.is_equivalent_to(PythonRegex(regex).to_epsilon_nfa())
+    assert dfa.is_equivalent_to(exp_dfa)
     assert dfa.is_deterministic()
     assert dfa.is_equivalent_to(dfa.minimize())
