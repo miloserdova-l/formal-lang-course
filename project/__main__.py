@@ -44,7 +44,7 @@ if __name__ == "__main__":
             exit(1)
         graph = cfpq_data.graph_from_dataset(name, verbose=False)
         print(get_info(graph))
-    else:
+    if args.gen_graph is not None:
         gen_graph_args = args.gen_graph
         if not (gen_graph_args[0].isdigit() and gen_graph_args[1].isdigit()):
             print("Size of cycles should be integer", file=sys.stderr)

@@ -4,6 +4,7 @@ import cfpq_data
 import networkx
 import networkx.algorithms.isomorphism as iso
 from project import *
+from pyformlang.regular_expression import PythonRegex
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -39,3 +40,11 @@ def test_save_graph_to_file():
         os.sep.join([root_path, "output", "my-graph"]),
         os.sep.join([root_path, "output", "exp-graph"]),
     )
+
+
+def test_regex_to_min_dfa():
+    regex = "abc|d"
+    dfa = regex_to_min_dfa(regex)
+    assert dfa.is_equivalent_to(PythonRegex(regex).to_epsilon_nfa())
+    assert dfa.is_deterministic()
+    assert dfa.is_equivalent_to(dfa.minimize())

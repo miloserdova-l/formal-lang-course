@@ -3,6 +3,8 @@ import networkx
 from typing import Tuple
 from networkx import MultiDiGraph
 import cfpq_data
+from pyformlang.finite_automaton import DeterministicFiniteAutomaton
+from pyformlang.regular_expression import PythonRegex
 
 
 @dataclass
@@ -43,6 +45,13 @@ def create_labeled_two_cycles_graph(
         edge_labels=edge_labels,
         verbose=False,
     )
+
+
+def regex_to_min_dfa(regex: PythonRegex or str) -> DeterministicFiniteAutomaton:
+    if isinstance(regex, str):
+        regex = PythonRegex(regex)
+    eps_nfa = regex.to_epsilon_nfa()
+    return eps_nfa.minimize()
 
 
 def save_graph_to_file(graph: MultiDiGraph, file: str) -> None:
