@@ -1,5 +1,5 @@
-import os
 import filecmp
+import os
 import cfpq_data
 import networkx
 import networkx.algorithms.isomorphism as iso
