@@ -59,16 +59,9 @@ def graph_to_nfa(
         start_nodes = graph.nodes
     if final_nodes is None:
         final_nodes = graph.nodes
-    dfa = NondeterministicFiniteAutomaton()
-
-    for edge in graph.edges(data="label"):
-        u = State(edge[0])
-        v = State(edge[1])
-        label = Symbol(edge[2])
-        dfa.add_transition(u, label, v)
-
+    nfa = NondeterministicFiniteAutomaton.from_networkx(graph)
     for v in start_nodes:
-        dfa.add_start_state(State(v))
+        nfa.add_start_state(State(v))
     for v in final_nodes:
-        dfa.add_final_state(State(v))
-    return dfa
+        nfa.add_final_state(State(v))
+    return nfa
