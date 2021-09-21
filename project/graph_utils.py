@@ -3,6 +3,9 @@ import networkx
 from typing import Tuple
 from networkx import MultiDiGraph
 import cfpq_data
+from pyformlang.finite_automaton import State
+from pyformlang.finite_automaton import Symbol
+from pyformlang.finite_automaton import NondeterministicFiniteAutomaton
 
 
 @dataclass
@@ -47,3 +50,18 @@ def create_labeled_two_cycles_graph(
 
 def save_graph_to_file(graph: MultiDiGraph, file: str) -> None:
     networkx.drawing.nx_pydot.write_dot(graph, file)
+
+
+def graph_to_nfa(
+    graph: MultiDiGraph, start_nodes: set = None, final_nodes: set = None
+) -> NondeterministicFiniteAutomaton:
+    if start_nodes is None:
+        start_nodes = graph.nodes
+    if final_nodes is None:
+        final_nodes = graph.nodes
+    nfa = NondeterministicFiniteAutomaton.from_networkx(graph)
+    for v in start_nodes:
+        nfa.add_start_state(State(v))
+    for v in final_nodes:
+        nfa.add_final_state(State(v))
+    return nfa
