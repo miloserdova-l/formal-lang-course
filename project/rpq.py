@@ -52,7 +52,7 @@ def transitive_closure(m: bsr_matrix) -> bsr_matrix:
     return m
 
 
-def rpq(g: FiniteAutomaton, r: FiniteAutomaton):
+def rpq(g: FiniteAutomaton, r: FiniteAutomaton) -> set:
     k, state_by_number_g, state_by_number_r = get_intersection(g, r)
     tc = transitive_closure(k)
     x, y = tc.nonzero()
