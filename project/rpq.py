@@ -1,8 +1,9 @@
 from pyformlang.finite_automaton import FiniteAutomaton, State
 from scipy.sparse import kron, dok_matrix, bsr_matrix
+from typing import Tuple
 
 
-def get_edges_by_label(fa: FiniteAutomaton) -> tuple[dict, dict]:
+def get_edges_by_label(fa: FiniteAutomaton) -> Tuple[dict[str, dok_matrix], dict]:
     n = len(fa.states)
     edges = fa.to_dict()
     d = dict()
@@ -30,7 +31,7 @@ def get_edges_by_label(fa: FiniteAutomaton) -> tuple[dict, dict]:
 
 def get_intersection(
     g: FiniteAutomaton, r: FiniteAutomaton
-) -> tuple[bsr_matrix, dict, dict]:
+) -> Tuple[bsr_matrix, dict, dict]:
     g_edges, state_by_number_g = get_edges_by_label(g)
     r_edges, state_by_number_r = get_edges_by_label(r)
     n = len(g.states)
