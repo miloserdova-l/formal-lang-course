@@ -2,7 +2,7 @@ from pyformlang.finite_automaton import FiniteAutomaton, State
 from scipy.sparse import kron, dok_matrix, bsr_matrix
 
 
-def get_edges_by_label(fa: FiniteAutomaton) -> tuple[dict[str, dok_matrix], dict]:
+def get_edges_by_label(fa: FiniteAutomaton) -> tuple[dict, dict]:
     n = len(fa.states)
     edges = fa.to_dict()
     d = dict()
