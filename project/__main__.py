@@ -1,7 +1,7 @@
 import argparse
 import sys
-import cfpq_data
 from pathlib import Path
+import cfpq_data
 import networkx.drawing.nx_pydot
 from pyformlang.regular_expression import PythonRegex
 
@@ -9,11 +9,8 @@ from project.graph_utils import (
     get_info,
     create_labeled_two_cycles_graph,
     save_graph_to_file,
-    graph_to_nfa,
 )
 from project.rpq import rpq
-from project.regex_utils import regex_to_min_dfa
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -80,7 +77,7 @@ if __name__ == "__main__":
             output = gen_graph_args[4]
             save_graph_to_file(create_labeled_two_cycles_graph(n, m, labels), output)
     if "regex" in args:
-        regex = regex_to_min_dfa(PythonRegex(args.regex))
+        regex = PythonRegex(args.regex)
         name = args.graph
         file = Path(name)
         if all(
@@ -94,7 +91,5 @@ if __name__ == "__main__":
                 graph = networkx.drawing.nx_pydot.read_dot(file)
         else:
             graph = cfpq_data.graph_from_dataset(name, verbose=False)
-        for (u, v) in rpq(
-            graph_to_nfa(graph, args.start_nodes, args.final_nodes), regex
-        ):
+        for (u, v) in rpq(graph, regex, args.start_nodes, args.final_nodes):
             print("There is path between {} and {}".format(u, v))

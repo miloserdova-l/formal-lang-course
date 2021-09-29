@@ -1,33 +1,31 @@
-from pyformlang.finite_automaton import FiniteAutomaton
-from scipy.sparse import bsr_matrix
-from project.finite_automaton_utils import Automaton
+from networkx import Graph
+from pyformlang.regular_expression import PythonRegex
+
+from project import regex_to_min_dfa
+from project.finite_automaton_utils import BoolFiniteAutomaton
+from project.graph_utils import graph_to_nfa
 
 
-def transitive_closure(m: bsr_matrix) -> bsr_matrix:
-    while True:
-        old = m.todense().tolist()
-        m += m.dot(m)
-        new = m.todense().tolist()
-        if new == old:
-            break
-    return m
-
-
-def rpq(g: FiniteAutomaton, r: FiniteAutomaton) -> set:
-    new_g = Automaton(g)
-    new_r = Automaton(r)
+def rpq(
+    graph: Graph, request: PythonRegex, start_nodes: set = None, final_nodes: set = None
+) -> set:
+    new_g = BoolFiniteAutomaton(graph_to_nfa(graph, start_nodes, final_nodes))
+    new_r = BoolFiniteAutomaton(regex_to_min_dfa(request))
     intersection = new_g.get_intersection(new_r)
-    tc = transitive_closure(intersection)
+    tc = intersection.transitive_closure()
     x, y = tc.nonzero()
     ans = set()
     for (i, j) in zip(x, y):
-        a = i // new_r.number_of_states
-        b = j // new_r.number_of_states
         if (
-            new_g.get_state_by_node(a) in g.start_states
-            and new_g.get_state_by_node(b) in g.final_states
-            and new_r.get_state_by_node(i % new_r.number_of_states) in r.start_states
-            and new_r.get_state_by_node(j % new_r.number_of_states) in r.final_states
+            intersection.get_state_by_number(i) in intersection.fa.start_states
+            and intersection.get_state_by_number(j) in intersection.fa.final_states
         ):
-            ans.add((new_g.get_state_by_node(a), new_g.get_state_by_node(b)))
+            actual_i = intersection.get_state_by_number(i).value
+            actual_j = intersection.get_state_by_number(j).value
+            ans.add(
+                (
+                    new_g.get_state_by_number(actual_i // new_r.number_of_states),
+                    new_g.get_state_by_number(actual_j // new_r.number_of_states),
+                )
+            )
     return ans

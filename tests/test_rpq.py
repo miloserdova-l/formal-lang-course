@@ -1,60 +1,28 @@
-from pyformlang.finite_automaton import (
-    DeterministicFiniteAutomaton,
-    NondeterministicFiniteAutomaton,
-    State,
-)
+import pytest
 from pyformlang.regular_expression import PythonRegex
-from project import regex_to_min_dfa
+
+from project import create_labeled_two_cycles_graph
 from project.rpq import rpq
-from project.finite_automaton_utils import Automaton
 
 
-def test_intersection():
-    first = NondeterministicFiniteAutomaton()
-    first.add_transitions([(0, "b", 1), (1, "c", 1), (1, "b", 2), (0, "a", 2)])
-    """
-    { } {b} {a}
-    { } {c} {b}
-    { } { } { }
-    """
-    second = DeterministicFiniteAutomaton()
-    second.add_transitions([(0, "b", 1), (1, "c", 2), (2, "b", 3)])
-    """
-    { } {b} { } { }
-    { } { } {c} { }
-    { } { } { } {b}
-    { } { } { } { }
-    """
-    exp = [[False for _ in range(12)] for _ in range(12)]
-    """
-    { } { } { } { }|{ } {b} { } { }|{ } { } { } { }
-    { } { } { } { }|{ } { } { } { }|{ } { } { } { }
-    { } { } { } { }|{ } { } { } {b}|{ } { } { } { }
-    { } { } { } { }|{ } { } { } { }|{ } { } { } { }
-    { } { } { } { } { } { } { } { } { } {b} { } { }
-    { } { } { } { } { } { } {c} { } { } { } { } { }
-    { } { } { } { } { } { } { } { } { } { } { } {b}
-    { } { } { } { } { } { } { } { } { } { } { } { }
-    { } { } { } { }|{ } { } { } { }|{ } { } { } { }
-    { } { } { } { }|{ } { } { } { }|{ } { } { } { }
-    { } { } { } { }|{ } { } { } { }|{ } { } { } { }
-    { } { } { } { }|{ } { } { } { }|{ } { } { } { }
-    """
-    exp[0][5] = True
-    exp[2][7] = True
-    exp[4][9] = True
-    exp[5][6] = True
-    exp[6][11] = True
-    assert (
-        Automaton(first).get_intersection(Automaton(second)).todense().tolist() == exp
-    )
+@pytest.fixture()
+def graph():
+    return create_labeled_two_cycles_graph(2, 3, ("a", "c"))
 
 
-def test_rpq():
-    graph = DeterministicFiniteAutomaton()
-    graph.add_transitions([(1, "a", 2), (2, "a", 3), (3, "c", 4)])
-    graph.add_start_state(State(1))
-    graph.add_final_state(State(4))
-    request = regex_to_min_dfa(PythonRegex("a*c"))
-    ans = rpq(graph, request)
-    assert ans == {(1, 4)}
+def test_rpq(graph):
+    request = PythonRegex("a*c")
+    ans = rpq(graph, request, start_nodes={1}, final_nodes={3})
+    assert ans == {(1, 3)}
+
+    request = PythonRegex("a*|c")
+    ans = rpq(graph, request, start_nodes={4}, final_nodes={4, 5})
+    assert ans == {(4, 5)}
+
+    request = PythonRegex("ac*")
+    ans = rpq(graph, request, start_nodes={2}, final_nodes={0, 3, 4, 5})
+    assert ans == {(2, 0), (2, 3), (2, 4), (2, 5)}
+
+    request = PythonRegex("a*b*c*")
+    ans = rpq(graph, request, start_nodes={0, 1}, final_nodes={0, 3, 5})
+    assert ans == {(0, 0), (0, 3), (0, 5), (1, 3), (1, 5), (1, 0)}
