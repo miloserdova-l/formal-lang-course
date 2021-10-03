@@ -1,0 +1,80 @@
+import sys
+
+from pyformlang.finite_automaton import FiniteAutomaton
+from scipy.sparse import kron, dok_matrix, bsr_matrix
+
+
+class BoolFiniteAutomaton:
+    def __init__(self, fa: FiniteAutomaton):
+        self.start_states = fa.start_states
+        self.final_states = fa.final_states
+        self.number_of_states = len(fa.states)
+        self.edges = dict()
+        self.__number_of_state = dict()
+        self.__state_by_number = dict()
+        for i, state in enumerate(fa.states):
+            self.__number_of_state[state] = i
+            self.__state_by_number[i] = state
+
+        edges = fa.to_dict()
+
+        for u in edges.keys():
+            i = self.__number_of_state.get(u)
+            for label in edges.get(u).keys():
+                if not isinstance(edges.get(u).get(label), set):
+                    edges.get(u)[label] = {edges.get(u).get(label)}
+                for v in edges.get(u).get(label):
+                    j = self.__number_of_state.get(v)
+                    if label not in self.edges.keys():
+                        self.edges[label] = dok_matrix(
+                            (self.number_of_states, self.number_of_states), dtype=bool
+                        )
+                    self.edges[label][i, j] = True
+
+    def get_intersection(self, other):
+        if not isinstance(other, BoolFiniteAutomaton):
+            print("Illegal argument error: argument type mismatch", file=sys.stderr)
+            exit(1)
+        labels = set(self.edges.keys()).intersection(set(other.edges.keys()))
+        intersection = dict()
+        for label in labels:
+            intersection[label] = kron(self.edges[label], other.edges[label])
+        start_states = set()
+        final_states = set()
+        for u in self.start_states:
+            for v in other.start_states:
+                start_states.add(
+                    self.__number_of_state.get(u) * other.number_of_states
+                    + other.__number_of_state.get(v)
+                )
+        for u in self.final_states:
+            for v in other.final_states:
+                final_states.add(
+                    self.__number_of_state.get(u) * other.number_of_states
+                    + other.__number_of_state.get(v)
+                )
+        return self.create_bfa(intersection, start_states, final_states)
+
+    def transitive_closure(self) -> bsr_matrix:
+        res_m = sum(self.edges.values())
+        while True:
+            old = res_m
+            res_m += res_m.dot(res_m)
+            if res_m.nnz == old.nnz:
+                break
+        return res_m
+
+    def get_state_by_number(self, n: int):
+        if n in self.__state_by_number.keys():
+            return self.__state_by_number.get(n)
+        return n
+
+    @classmethod
+    def create_bfa(cls, edges: dict, start_states: set, final_states: set):
+        bfa = cls.__new__(cls)
+        super(BoolFiniteAutomaton, bfa).__init__()
+        bfa.edges = edges
+        bfa.start_states = start_states
+        bfa.final_states = final_states
+        bfa.__state_by_number = dict()
+        return bfa

@@ -4,7 +4,6 @@ from typing import Tuple
 from networkx import MultiDiGraph
 import cfpq_data
 from pyformlang.finite_automaton import State
-from pyformlang.finite_automaton import Symbol
 from pyformlang.finite_automaton import NondeterministicFiniteAutomaton
 
 
