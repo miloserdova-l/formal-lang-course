@@ -16,16 +16,11 @@ def rpq(
     x, y = tc.nonzero()
     ans = set()
     for (i, j) in zip(x, y):
-        if (
-            intersection.get_state_by_number(i) in intersection.fa.start_states
-            and intersection.get_state_by_number(j) in intersection.fa.final_states
-        ):
-            actual_i = intersection.get_state_by_number(i).value
-            actual_j = intersection.get_state_by_number(j).value
+        if i in intersection.start_states and j in intersection.final_states:
             ans.add(
                 (
-                    new_g.get_state_by_number(actual_i // new_r.number_of_states),
-                    new_g.get_state_by_number(actual_j // new_r.number_of_states),
+                    new_g.get_state_by_number(i // new_r.number_of_states),
+                    new_g.get_state_by_number(j // new_r.number_of_states),
                 )
             )
     return ans

@@ -49,8 +49,9 @@ def test_intersection():
     { } { } { } { }|{ } { } { } { }|{ } { } { } { }
     { } { } { } { }|{ } { } { } { }|{ } { } { } { }
     """
-    assert (
-        BoolFiniteAutomaton(first)
-        .get_intersection(BoolFiniteAutomaton(second))
-        .fa.is_equivalent_to(exp)
-    )
+    actual = BoolFiniteAutomaton(first).get_intersection(BoolFiniteAutomaton(second))
+    expected = BoolFiniteAutomaton(exp)
+    for label in actual.edges.keys():
+        assert actual.edges.get(label).nnz == expected.edges.get(label).nnz
+    assert actual.start_states == expected.start_states
+    assert actual.final_states == expected.final_states
