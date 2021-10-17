@@ -6,3 +6,5 @@ from project.graph_utils import (
 )
 
 from project.regex_utils import regex_to_min_dfa
+
+from project.cfg_utils import read_cfg_from_file, cfg_to_normal_form
