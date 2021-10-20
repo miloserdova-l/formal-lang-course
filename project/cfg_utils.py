@@ -6,7 +6,12 @@ def cfg_to_normal_form(cfg: CFG) -> CFG:
     cfg = cfg.to_normal_form()
 
     if is_gen_eps:
-        cfg._productions |= {Production(cfg.start_symbol, [])}
+        return CFG(
+            cfg.variables,
+            cfg.terminals,
+            cfg.start_symbol,
+            cfg.productions | {Production(cfg.start_symbol, [])},
+        )
 
     return cfg
 
