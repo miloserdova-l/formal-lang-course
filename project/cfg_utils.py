@@ -1,8 +1,14 @@
-from pyformlang.cfg import CFG
+from pyformlang.cfg import CFG, Production
 
 
 def cfg_to_normal_form(cfg: CFG) -> CFG:
-    return cfg.to_normal_form()
+    is_gen_eps = cfg.generate_epsilon()
+    cfg = cfg.to_normal_form()
+
+    if is_gen_eps is True:
+        cfg.productions |= {Production(cfg.start_symbol, [])}
+
+    return cfg
 
 
 def read_cfg_from_file(path: str, start_symbol: str = "S") -> CFG:
