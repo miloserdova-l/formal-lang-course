@@ -5,7 +5,7 @@ def cfg_to_normal_form(cfg: CFG) -> CFG:
     is_gen_eps = cfg.generate_epsilon()
     cfg = cfg.to_normal_form()
 
-    if is_gen_eps is True:
+    if is_gen_eps:
         cfg.productions |= {Production(cfg.start_symbol, [])}
 
     return cfg
