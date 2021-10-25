@@ -54,7 +54,7 @@ class ECFG(CFG):
             productions=cfg.productions,
         )
 
-        self.dependencies = dict()
+        self.dependencies = dict[Variable, list[list]]()
 
         for p in self.productions:
             cur = self.dependencies.get(p.head, list())
@@ -67,7 +67,11 @@ class ECFG(CFG):
         rsm.start_symbol = self.start_symbol
 
         for p in self.dependencies.keys():
-            rsm.boxes[p] = regex_to_min_dfa(self.__get_regex(self.dependencies.get(p)))
+            rsm.boxes[p] = (
+                self.__get_regex(self.dependencies.get(p))
+                .to_epsilon_nfa()
+                .to_deterministic()
+            )
 
         return rsm
 
