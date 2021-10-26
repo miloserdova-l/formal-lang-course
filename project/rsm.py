@@ -4,11 +4,7 @@ from pyformlang.finite_automaton import DeterministicFiniteAutomaton
 Box = dict[Variable, DeterministicFiniteAutomaton]
 
 
-class RecursiveStateMachine:
-    def __init__(self):
-        self.start_symbol = None
-        self.boxes = Box()
-
-    def minimize(self) -> None:
-        for var in self.boxes.keys():
-            self.boxes.get(var).minimize()
+class RSM:
+    def __init__(self, start_symbol: Variable = None, boxes: Box = None):
+        self.start_symbol = start_symbol
+        self.boxes = boxes if boxes else Box()

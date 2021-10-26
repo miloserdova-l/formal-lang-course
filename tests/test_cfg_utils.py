@@ -5,7 +5,6 @@ import pytest
 from pyformlang.cfg import CFG
 from pyformlang.cfg import Production, Variable, Terminal
 from project import cfg_to_normal_form, read_cfg_from_file
-from project.cfg_utils import ECFG
 
 root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -138,57 +137,4 @@ def test_equivalence(cfg, accepted, rejected):
     cnf = cfg_to_normal_form(cfg)
     assert all(cnf.contains(w) and cfg.contains(w) for w in accepted) and all(
         not cnf.contains(w) and not cfg.contains(w) for w in rejected
-    )
-
-
-@pytest.mark.parametrize(
-    "cfg, expected",
-    [
-        (
-            """
-            S -> B
-            B -> C
-            C -> S S
-            S -> epsilon
-            S -> a
-        """,
-            {Variable("S"): [[Variable("S"), Variable("S")], [], [Terminal("a")]]},
-        ),
-        (
-            """
-            S -> a S
-            S -> epsilon
-        """,
-            {
-                Variable("S"): [
-                    [Variable("a#CNF#"), Variable("S")],
-                    [Terminal("a")],
-                    [],
-                ],
-                Variable("a#CNF#"): [[Terminal("a")]],
-            },
-        ),
-        (
-            """
-            S -> A B
-            S -> epsilon
-            A -> a
-            B -> epsilon
-        """,
-            {Variable("S"): [[Terminal("a")], []]},
-        ),
-    ],
-)
-def test_ecfg(cfg, expected):
-    cfg = CFG.from_text(cfg)
-    ecfg = ECFG(cfg.variables, cfg.terminals, cfg.start_symbol, cfg.productions)
-    assert all(
-        ecfg.dependencies[h].count(b) == expected[h].count(b)
-        for h in ecfg.dependencies.keys()
-        for b in ecfg.dependencies[h]
-    )
-    assert all(
-        ecfg.dependencies[h].count(b) == expected[h].count(b)
-        for h in expected.keys()
-        for b in expected[h]
     )

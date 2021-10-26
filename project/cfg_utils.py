@@ -1,9 +1,10 @@
-from pyformlang.cfg import CFG, Production, Variable, Terminal
-from pyformlang.regular_expression import PythonRegex
-from typing import AbstractSet, Iterable
+from functools import reduce
 
-from project import regex_to_min_dfa
-from project.rsm import RecursiveStateMachine
+from pyformlang.cfg import CFG, Production
+from pyformlang.regular_expression import PythonRegex
+
+from project.ecfg import ECFG
+from project.rsm import RSM
 
 
 def cfg_to_normal_form(cfg: CFG) -> CFG:
@@ -27,66 +28,34 @@ def read_cfg_from_file(path: str, start_symbol: str = "S") -> CFG:
 
 
 def cfg_to_ecfg(cfg: CFG):
-    return ECFG(cfg.variables, cfg.terminals, cfg.start_symbol, cfg.productions)
+    dependencies = dict()
+    for p in cfg.productions:
+        cur = dependencies.get(p.head, list())
+        cur.append(p.body)
+        dependencies[p.head] = cur
+    productions = dict(
+        map(lambda kv: (kv[0], __get_regex(kv[1])), dependencies.items())
+    )
+    return ECFG(cfg.variables, cfg.terminals, cfg.start_symbol, productions)
 
 
-class ECFG(CFG):
-    def __init__(
-        self,
-        variables: AbstractSet[Variable] = None,
-        terminals: AbstractSet[Terminal] = None,
-        start_symbol: Variable = None,
-        productions: Iterable[Production] = None,
-    ):
-        cfg = CFG(
-            variables=variables,
-            terminals=terminals,
-            start_symbol=start_symbol,
-            productions=productions,
-        )
+def ecfg_to_rsm(ecfg: ECFG) -> RSM:
+    boxes = dict()
+    for k, v in ecfg.productions.items():
+        boxes[k] = v.to_epsilon_nfa().to_deterministic()
+    return RSM(ecfg.start_symbol, boxes)
 
-        cfg = cfg_to_normal_form(cfg)
 
-        super(ECFG, self).__init__(
-            variables=cfg.variables,
-            terminals=cfg.terminals,
-            start_symbol=cfg.start_symbol,
-            productions=cfg.productions,
-        )
+def __get_regex(body: list) -> PythonRegex:
+    return reduce(
+        lambda f, s: f.union(s),
+        [__get_concat(elem) for elem in body],
+    )
 
-        self.dependencies = dict[Variable, list[list]]()
 
-        for p in self.productions:
-            cur = self.dependencies.get(p.head, list())
-            cur.append(p.body)
-            self.dependencies[p.head] = cur
-
-    def to_rsm(self) -> RecursiveStateMachine:
-        rsm = RecursiveStateMachine()
-
-        rsm.start_symbol = self.start_symbol
-
-        for p in self.dependencies.keys():
-            rsm.boxes[p] = (
-                self.__get_regex(self.dependencies.get(p))
-                .to_epsilon_nfa()
-                .to_deterministic()
-            )
-
-        return rsm
-
-    @staticmethod
-    def __get_regex(body: list) -> PythonRegex:
-        cur_r = None
-        for conjunction in body:
-            if len(conjunction) == 0:
-                new_r = PythonRegex("")
-            else:
-                new_r = PythonRegex(conjunction[0].value)
-                if len(conjunction) > 1:
-                    new_r = new_r.concatenate(PythonRegex(conjunction[1].value))
-            if cur_r is None:
-                cur_r = new_r
-            else:
-                cur_r = cur_r.union(new_r)
-        return cur_r
+def __get_concat(elem: list) -> PythonRegex:
+    if len(elem) == 0:
+        return PythonRegex("")
+    return reduce(
+        lambda x, y: x.concatenate(y), [PythonRegex(symbol.value) for symbol in elem]
+    )
