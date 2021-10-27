@@ -48,7 +48,7 @@ from project.regex_utils import regex_to_min_dfa
         ),
     ],
 )
-def test_ecfg_to_rsm(cfg, regex):
+def test_cfg_to_ecfg(cfg, regex):
     cfg = CFG.from_text(cfg)
     ecfg = cfg_to_ecfg(cfg)
     assert set(ecfg.productions.keys()) == set(regex.keys())
