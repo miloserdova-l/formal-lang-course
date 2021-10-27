@@ -75,11 +75,11 @@ def test_cfg_to_normal_form(cfg, gen_eps):
         (
             "cfg-3.txt",
             {
-                Production(Variable("A"), [Variable("B")]),
+                Production(Variable("S"), [Variable("B")]),
                 Production(Variable("B"), [Variable("C")]),
-                Production(Variable("C"), [Variable("A"), Variable("A")]),
-                Production(Variable("A"), []),
-                Production(Variable("A"), [Terminal("a")]),
+                Production(Variable("C"), [Variable("S"), Variable("S")]),
+                Production(Variable("S"), []),
+                Production(Variable("S"), [Terminal("a")]),
             },
         ),
     ],
