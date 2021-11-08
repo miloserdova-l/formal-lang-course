@@ -13,7 +13,7 @@ from project.cfpq import cfpq
             """
             S -> epsilon
             """,
-            labeled_cycle_graph(5, "a", verbose=False),
+            labeled_cycle_graph(5, "a"),
             None,
             None,
             {(0, 0), (1, 1), (2, 2), (3, 3), (4, 4)},
@@ -22,7 +22,7 @@ from project.cfpq import cfpq
             """
                 S -> a | epsilon
                 """,
-            labeled_cycle_graph(3, "a", verbose=False),
+            labeled_cycle_graph(3, "a"),
             {0},
             {0, 1},
             {

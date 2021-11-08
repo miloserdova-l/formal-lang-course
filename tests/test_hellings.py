@@ -13,14 +13,14 @@ from project.cfpq import hellings
             """
             S -> epsilon
             """,
-            labeled_cycle_graph(5, "a", verbose=False),
+            labeled_cycle_graph(5, "a"),
             {(0, "S", 0), (1, "S", 1), (2, "S", 2), (3, "S", 3), (4, "S", 4)},
         ),
         (
             """
                 S -> a | epsilon
                 """,
-            labeled_cycle_graph(3, "a", verbose=False),
+            labeled_cycle_graph(3, "a"),
             {
                 (0, "S", 0),
                 (1, "S", 1),
