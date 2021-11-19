@@ -8,25 +8,6 @@ from scipy.sparse import dok_matrix
 from project.cfg_utils import cfg_to_normal_form
 
 
-def cfpq(
-    graph: MultiDiGraph,
-    cfg: CFG,
-    start_nodes: set[int] = None,
-    final_nodes: set[int] = None,
-    start: Variable = Variable("S"),
-) -> set[Tuple[int, int]]:
-    cfg._start_symbol = start
-    if not start_nodes:
-        start_nodes = graph.nodes
-    if not final_nodes:
-        final_nodes = graph.nodes
-    result = set()
-    for u, h, v in hellings(cfg, graph):
-        if h == cfg.start_symbol.value and u in start_nodes and v in final_nodes:
-            result.add((u, v))
-    return result
-
-
 def hellings(cfg: CFG, graph: MultiDiGraph) -> set[Tuple[int, str, int]]:
     n = graph.number_of_nodes()
     if n == 0:

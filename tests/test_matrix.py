@@ -3,7 +3,7 @@ from cfpq_data import labeled_cycle_graph
 from pyformlang.cfg import CFG
 
 from project import create_labeled_two_cycles_graph
-from project.cfpq.hellings import hellings
+from project.cfpq.matrix import matrix
 
 
 @pytest.mark.parametrize(
@@ -75,5 +75,5 @@ from project.cfpq.hellings import hellings
         ),
     ],
 )
-def test_hellings(cfg, graph, exp_ans):
-    assert hellings(CFG.from_text(cfg), graph) == exp_ans
+def test_matrix(cfg, graph, exp_ans):
+    assert matrix(CFG.from_text(cfg), graph) == exp_ans
