@@ -1,9 +1,9 @@
 antlr4-python3-runtime
 black
-cfpq-data
+cfpq-data~=1.0.2
 networkx~=2.6.2
 pre-commit
 pydot
 pyformlang~=0.1.26
-pytest
-scipy
+pytest~=6.2.5
+scipy~=1.7.1
