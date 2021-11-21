@@ -44,18 +44,20 @@ class BoolFiniteAutomaton:
         for u in self.start_states:
             for v in other.start_states:
                 start_states.add(
-                    self.__number_of_state.get(u) * other.number_of_states
-                    + other.__number_of_state.get(v)
+                    self.get_number_of_state(u) * other.number_of_states
+                    + other.get_number_of_state(v)
                 )
         for u in self.final_states:
             for v in other.final_states:
                 final_states.add(
-                    self.__number_of_state.get(u) * other.number_of_states
-                    + other.__number_of_state.get(v)
+                    self.get_number_of_state(u) * other.number_of_states
+                    + other.get_number_of_state(v)
                 )
         return self.create_bfa(intersection, start_states, final_states)
 
     def transitive_closure(self) -> bsr_matrix:
+        if len(self.edges) == 0:
+            return bsr_matrix((1, 1), dtype=bool)
         res_m = sum(self.edges.values())
         while True:
             old = res_m
@@ -69,6 +71,11 @@ class BoolFiniteAutomaton:
             return self.__state_by_number.get(n)
         return n
 
+    def get_number_of_state(self, n):
+        if n in self.__number_of_state.keys():
+            return self.__number_of_state.get(n)
+        return n
+
     @classmethod
     def create_bfa(cls, edges: dict, start_states: set, final_states: set):
         bfa = cls.__new__(cls)
@@ -77,4 +84,5 @@ class BoolFiniteAutomaton:
         bfa.start_states = start_states
         bfa.final_states = final_states
         bfa.__state_by_number = dict()
+        bfa.__number_of_state = dict()
         return bfa
