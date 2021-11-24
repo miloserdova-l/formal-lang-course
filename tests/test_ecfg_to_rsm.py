@@ -2,8 +2,8 @@ import pytest
 from pyformlang.cfg import CFG, Variable, Terminal
 
 from project.cfg_utils import cfg_to_ecfg
-from project.regex_utils import regex_to_min_dfa
-from project.rsm import RSM, get_regex
+from project.regex_utils import regex_to_min_dfa, get_regex
+from project.rsm import RSM
 
 
 @pytest.mark.parametrize(

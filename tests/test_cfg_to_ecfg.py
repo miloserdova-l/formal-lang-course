@@ -2,8 +2,7 @@ import pytest
 from pyformlang.cfg import CFG, Variable, Terminal
 
 from project.cfg_utils import cfg_to_ecfg
-from project.regex_utils import regex_to_min_dfa
-from project.rsm import get_regex
+from project.regex_utils import regex_to_min_dfa, get_regex
 
 
 @pytest.mark.parametrize(

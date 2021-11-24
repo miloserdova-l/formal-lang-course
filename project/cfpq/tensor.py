@@ -19,12 +19,10 @@ def tensor(cfg: CFG, graph: MultiDiGraph) -> set[Tuple[int, str, int]]:
     m_rsm = MatrixRSM(ecfg)
     g = BoolFiniteAutomaton(graph_to_nfa(graph))
 
-    # Add loops
     for p in cfg.productions:
         if len(p.body) == 0:
             g.edges[p.head.value] = identity(g.number_of_states, dtype=bool).todok()
 
-    changing = True
     bfa = BoolFiniteAutomaton.create_bfa(
         m_rsm.m_boxes, m_rsm.start_states, m_rsm.final_states
     )

@@ -1,11 +1,9 @@
-from functools import reduce
-
 from pyformlang.cfg import Variable
 from pyformlang.finite_automaton import DeterministicFiniteAutomaton
-from pyformlang.regular_expression import PythonRegex
 from scipy.sparse import dok_matrix
 
 from project.ecfg import ECFG
+from project.regex_utils import get_regex
 
 Box = dict[Variable, DeterministicFiniteAutomaton]
 
@@ -39,18 +37,3 @@ class MatrixRSM(RSM):
                     self.m_boxes[b.value] = m
                     i += 1
                 i += 1
-
-
-def get_regex(body: list) -> PythonRegex:
-    return reduce(
-        lambda f, s: f.union(s),
-        [get_concat(elem) for elem in body],
-    )
-
-
-def get_concat(elem: list) -> PythonRegex:
-    if len(elem) == 0:
-        return PythonRegex("")
-    return reduce(
-        lambda x, y: x.concatenate(y), [PythonRegex(symbol.value) for symbol in elem]
-    )
