@@ -1,9 +1,9 @@
 import pytest
-from pyformlang.cfg import CFG, Variable
-from pyformlang.regular_expression import PythonRegex
+from pyformlang.cfg import CFG, Variable, Terminal
 
-from project.cfg_utils import ecfg_to_rsm, cfg_to_ecfg
+from project.cfg_utils import cfg_to_ecfg
 from project.regex_utils import regex_to_min_dfa
+from project.rsm import RSM, get_regex
 
 
 @pytest.mark.parametrize(
@@ -16,9 +16,9 @@ from project.regex_utils import regex_to_min_dfa
             C -> S S
         """,
             {
-                Variable("S"): PythonRegex("B|a|"),
-                Variable("B"): PythonRegex("C"),
-                Variable("C"): PythonRegex("SS"),
+                Variable("S"): [[Variable("B")], [Terminal("a")], [Terminal("")]],
+                Variable("B"): [[Variable("C")]],
+                Variable("C"): [[Variable("S"), Variable("S")]],
             },
         ),
         (
@@ -26,7 +26,7 @@ from project.regex_utils import regex_to_min_dfa
             S -> a S |
         """,
             {
-                Variable("S"): PythonRegex("aS|"),
+                Variable("S"): [[Terminal("a"), Variable("S")], [Terminal("")]],
             },
         ),
         (
@@ -36,18 +36,18 @@ from project.regex_utils import regex_to_min_dfa
             B -> b |
         """,
             {
-                Variable("S"): PythonRegex("AB|"),
-                Variable("A"): PythonRegex("a"),
-                Variable("B"): PythonRegex("b|"),
+                Variable("S"): [[Variable("A"), Variable("B")], [Terminal("")]],
+                Variable("A"): [[Terminal("a")]],
+                Variable("B"): [[Terminal("b")], [Terminal("")]],
             },
         ),
     ],
 )
 def test_ecfg_to_rsm(cfg, regex):
     cfg = CFG.from_text(cfg)
-    rsm = ecfg_to_rsm(cfg_to_ecfg(cfg))
+    rsm = RSM(cfg_to_ecfg(cfg))
     assert set(rsm.boxes.keys()) == set(regex.keys())
     assert all(
-        rsm.boxes.get(x).is_equivalent_to(regex_to_min_dfa(regex.get(x)))
+        rsm.boxes.get(x).is_equivalent_to(regex_to_min_dfa(get_regex(regex.get(x))))
         for x in rsm.boxes.keys()
     )

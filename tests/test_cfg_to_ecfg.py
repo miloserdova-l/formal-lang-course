@@ -1,9 +1,9 @@
 import pytest
-from pyformlang.cfg import CFG, Variable
-from pyformlang.regular_expression import PythonRegex
+from pyformlang.cfg import CFG, Variable, Terminal
 
 from project.cfg_utils import cfg_to_ecfg
 from project.regex_utils import regex_to_min_dfa
+from project.rsm import get_regex
 
 
 @pytest.mark.parametrize(
@@ -18,9 +18,9 @@ from project.regex_utils import regex_to_min_dfa
             S -> a
         """,
             {
-                Variable("S"): PythonRegex("B|a|"),
-                Variable("B"): PythonRegex("C"),
-                Variable("C"): PythonRegex("SS"),
+                Variable("S"): [[Variable("B")], [Terminal("a")], [Terminal("")]],
+                Variable("B"): [[Variable("C")]],
+                Variable("C"): [[Variable("S"), Variable("S")]],
             },
         ),
         (
@@ -29,7 +29,7 @@ from project.regex_utils import regex_to_min_dfa
             S -> epsilon
         """,
             {
-                Variable("S"): PythonRegex("aS|"),
+                Variable("S"): [[Terminal("a"), Variable("S")], [Terminal("")]],
             },
         ),
         (
@@ -41,9 +41,9 @@ from project.regex_utils import regex_to_min_dfa
             B -> b
         """,
             {
-                Variable("S"): PythonRegex("AB|"),
-                Variable("A"): PythonRegex("a"),
-                Variable("B"): PythonRegex("b|"),
+                Variable("S"): [[Variable("A"), Variable("B")], [Terminal("")]],
+                Variable("A"): [[Terminal("a")]],
+                Variable("B"): [[Terminal("b")], [Terminal("")]],
             },
         ),
     ],
@@ -53,8 +53,8 @@ def test_cfg_to_ecfg(cfg, regex):
     ecfg = cfg_to_ecfg(cfg)
     assert set(ecfg.productions.keys()) == set(regex.keys())
     assert all(
-        regex_to_min_dfa(ecfg.productions.get(x)).is_equivalent_to(
-            regex_to_min_dfa(regex.get(x))
+        regex_to_min_dfa(get_regex(ecfg.productions.get(x))).is_equivalent_to(
+            regex_to_min_dfa(get_regex(regex.get(x)))
         )
         for x in ecfg.productions.keys()
     )
