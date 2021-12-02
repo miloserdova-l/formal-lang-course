@@ -5,6 +5,7 @@ from pyformlang.cfg import CFG, Variable
 
 from project.cfpq.hellings import hellings
 from project.cfpq.matrix import matrix
+from project.cfpq.tensor import tensor
 
 
 def __cfpq(
@@ -45,3 +46,14 @@ def cfpq_hellings(
 ) -> set[Tuple[int, int]]:
     cfg._start_symbol = start
     return __cfpq(hellings(cfg, graph), graph, cfg, start_nodes, final_nodes)
+
+
+def cfpq_tensor(
+    graph: MultiDiGraph,
+    cfg: CFG,
+    start_nodes: set[int] = None,
+    final_nodes: set[int] = None,
+    start: Variable = Variable("S"),
+) -> set[Tuple[int, int]]:
+    cfg._start_symbol = start
+    return __cfpq(tensor(cfg, graph), graph, cfg, start_nodes, final_nodes)
