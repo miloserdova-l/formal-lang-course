@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from networkx import MultiDiGraph
 from pyformlang.cfg import CFG
 from scipy.sparse import dok_matrix
@@ -7,7 +5,7 @@ from scipy.sparse import dok_matrix
 from project import cfg_to_normal_form
 
 
-def matrix(cfg: CFG, graph: MultiDiGraph) -> set[Tuple[int, str, int]]:
+def matrix(cfg: CFG, graph: MultiDiGraph) -> set:
     n = graph.number_of_nodes()
     if n == 0:
         return set()

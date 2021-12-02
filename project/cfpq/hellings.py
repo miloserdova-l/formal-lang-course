@@ -1,14 +1,13 @@
 from collections import deque
-from typing import Tuple
 
 from networkx import MultiDiGraph
-from pyformlang.cfg import CFG, Variable
+from pyformlang.cfg import CFG
 from scipy.sparse import dok_matrix
 
 from project.cfg_utils import cfg_to_normal_form
 
 
-def hellings(cfg: CFG, graph: MultiDiGraph) -> set[Tuple[int, str, int]]:
+def hellings(cfg: CFG, graph: MultiDiGraph) -> set:
     n = graph.number_of_nodes()
     if n == 0:
         return set()

@@ -1,5 +1,3 @@
-from typing import Tuple
-
 from networkx import MultiDiGraph
 from pyformlang.cfg import CFG
 from scipy.sparse import dok_matrix, identity
@@ -10,7 +8,7 @@ from project.graph_utils import graph_to_nfa
 from project.rsm import MatrixRSM
 
 
-def tensor(cfg: CFG, graph: MultiDiGraph) -> set[Tuple[int, str, int]]:
+def tensor(cfg: CFG, graph: MultiDiGraph) -> set:
     ecfg = cfg_to_ecfg(cfg)
     nonterm = {p.value for p in ecfg.productions}
     m_rsm = MatrixRSM(ecfg)

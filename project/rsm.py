@@ -1,11 +1,9 @@
-from pyformlang.cfg import Variable
-from pyformlang.finite_automaton import DeterministicFiniteAutomaton
 from scipy.sparse import dok_matrix
 
 from project.ecfg import ECFG
 from project.regex_utils import get_regex
 
-Box = dict[Variable, DeterministicFiniteAutomaton]
+Box = dict
 
 
 class RSM:

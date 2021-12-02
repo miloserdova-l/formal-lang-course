@@ -1,21 +1,17 @@
-from typing import AbstractSet, Union
+from typing import AbstractSet
 
-from pyformlang.cfg import Variable, Terminal
+from pyformlang.cfg import Variable
 
 
 class ECFG:
     def __init__(
         self,
-        variables: AbstractSet[Variable] = None,
-        terminals: AbstractSet[Terminal] = None,
+        variables: AbstractSet = None,
+        terminals: AbstractSet = None,
         start_symbol: Variable = None,
-        productions: dict[Variable, list[list[Union[Variable, Terminal]]]] = None,
+        productions: dict = None,
     ):
         self.variables = variables
         self.terminals = terminals
         self.start_symbol = start_symbol
-        self.productions = (
-            productions
-            if productions
-            else dict[Variable, list[list[Union[Variable, Terminal]]]]()
-        )
+        self.productions = productions if productions else dict()
