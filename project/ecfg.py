@@ -1,7 +1,6 @@
-from typing import AbstractSet
+from typing import AbstractSet, Union
 
 from pyformlang.cfg import Variable, Terminal
-from pyformlang.regular_expression import PythonRegex
 
 
 class ECFG:
@@ -10,9 +9,13 @@ class ECFG:
         variables: AbstractSet[Variable] = None,
         terminals: AbstractSet[Terminal] = None,
         start_symbol: Variable = None,
-        productions: dict[Variable, PythonRegex] = None,
+        productions: dict[Variable, list[list[Union[Variable, Terminal]]]] = None,
     ):
         self.variables = variables
         self.terminals = terminals
         self.start_symbol = start_symbol
-        self.productions = productions if productions else dict[Variable, PythonRegex]()
+        self.productions = (
+            productions
+            if productions
+            else dict[Variable, list[list[Union[Variable, Terminal]]]]()
+        )
