@@ -12,10 +12,7 @@ from project.rsm import MatrixRSM
 
 def tensor(cfg: CFG, graph: MultiDiGraph) -> set[Tuple[int, str, int]]:
     ecfg = cfg_to_ecfg(cfg)
-    nonterm = set()
-    for p in ecfg.productions:
-        nonterm.add(p.value)
-    ecfg = cfg_to_ecfg(cfg)
+    nonterm = {p.value for p in ecfg.productions}
     m_rsm = MatrixRSM(ecfg)
     g = BoolFiniteAutomaton(graph_to_nfa(graph))
 
