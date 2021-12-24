@@ -81,7 +81,8 @@ class BoolFiniteAutomaton:
         else:
             from pycubool import Matrix
 
-            res_m = Matrix.empty(shape=(self.number_of_states, self.number_of_states))
+            n = self.edges.get(next(iter(self.edges.keys()))).shape[0]
+            res_m = Matrix.empty(shape=(n, n))
             for bm in self.edges.values():
                 res_m.ewiseadd(bm, out=res_m)
         while True:
