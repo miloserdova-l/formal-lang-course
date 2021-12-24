@@ -75,7 +75,12 @@ class BoolFiniteAutomaton:
 
     def transitive_closure(self) -> bsr_matrix:
         if len(self.edges) == 0:
-            return bsr_matrix((1, 1), dtype=bool)
+            if self.algo is Algo.SCIPY:
+                return bsr_matrix((1, 1), dtype=bool)
+            else:
+                from pycubool import Matrix
+
+                return Matrix.empty(shape=(1, 1))
         if self.algo is Algo.SCIPY:
             res_m = sum(self.edges.values())
         else:
