@@ -4,6 +4,9 @@ from enum import Enum
 from pyformlang.finite_automaton import FiniteAutomaton
 from scipy.sparse import kron, dok_matrix, bsr_matrix
 
+if sys.platform == "linux":
+    from pycubool import Matrix
+
 
 class Algo(Enum):
     SCIPY = 1
@@ -12,8 +15,6 @@ class Algo(Enum):
 
 class BoolFiniteAutomaton:
     def __init__(self, fa: FiniteAutomaton, algo: Algo = Algo.SCIPY):
-        if algo is Algo.PYCUBOOL:
-            from pycubool import Matrix
         self.start_states = fa.start_states
         self.final_states = fa.final_states
         self.number_of_states = len(fa.states)
@@ -78,18 +79,16 @@ class BoolFiniteAutomaton:
             if self.algo is Algo.SCIPY:
                 return bsr_matrix((1, 1), dtype=bool)
             else:
-                from pycubool import Matrix
-
                 return Matrix.empty(shape=(1, 1))
+
         if self.algo is Algo.SCIPY:
             res_m = sum(self.edges.values())
         else:
-            from pycubool import Matrix
-
             n = self.edges.get(next(iter(self.edges.keys()))).shape[0]
             res_m = Matrix.empty(shape=(n, n))
             for bm in self.edges.values():
                 res_m.ewiseadd(bm, out=res_m)
+
         while True:
             if self.algo is Algo.SCIPY:
                 old_nvals = res_m.nnz
@@ -97,12 +96,12 @@ class BoolFiniteAutomaton:
                 old_nvals = res_m.nvals
             if self.algo is Algo.SCIPY:
                 res_m += res_m.dot(res_m)
-                if res_m.nnz == old_nvals:
-                    break
+                new_vals = res_m.nnz
             else:
                 res_m.mxm(res_m, out=res_m, accumulate=True)
-                if res_m.nvals == old_nvals:
-                    break
+                new_vals = res_m.nvals
+            if new_vals == old_nvals:
+                break
         return res_m
 
     def get_state_by_number(self, n: int):

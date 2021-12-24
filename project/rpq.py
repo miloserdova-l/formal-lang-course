@@ -17,7 +17,10 @@ def rpq(
     new_r = BoolFiniteAutomaton(regex_to_min_dfa(request), algo)
     intersection = new_g.get_intersection(new_r)
     tc = intersection.transitive_closure()
-    x, y = tc.nonzero()
+    if algo is Algo.SCIPY:
+        x, y = tc.nonzero()
+    else:
+        x, y = tc.to_lists()
     ans = set()
     for (i, j) in zip(x, y):
         if i in intersection.start_states and j in intersection.final_states:
