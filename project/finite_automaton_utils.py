@@ -86,14 +86,17 @@ class BoolFiniteAutomaton:
             for bm in self.edges.values():
                 res_m.ewiseadd(bm, out=res_m)
         while True:
-            old = res_m.copy()
+            if self.algo is Algo.SCIPY:
+                old_nvals = res_m.nnz
+            else:
+                old_nvals = res_m.nvals
             if self.algo is Algo.SCIPY:
                 res_m += res_m.dot(res_m)
-                if res_m.nnz == old.nnz:
+                if res_m.nnz == old_nvals:
                     break
             else:
                 res_m.mxm(res_m, out=res_m, accumulate=True)
-                if res_m.nvals == old.nvals:
+                if res_m.nvals == old_nvals:
                     break
         return res_m
 
