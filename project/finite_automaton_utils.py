@@ -73,7 +73,7 @@ class BoolFiniteAutomaton:
                 )
         return self.create_bfa(intersection, start_states, final_states, self.algo)
 
-    def transitive_closure(self) -> bsr_matrix:
+    def transitive_closure(self):
         if len(self.edges) == 0:
             if self.algo is Algo.SCIPY:
                 return bsr_matrix((1, 1), dtype=bool)
