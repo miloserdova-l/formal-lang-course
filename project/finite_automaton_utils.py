@@ -86,7 +86,7 @@ class BoolFiniteAutomaton:
             for bm in self.edges.values():
                 res_m.ewiseadd(bm, out=res_m)
         while True:
-            old = res_m
+            old = res_m.copy()
             if self.algo is Algo.SCIPY:
                 res_m += res_m.dot(res_m)
                 if res_m.nnz == old.nnz:
