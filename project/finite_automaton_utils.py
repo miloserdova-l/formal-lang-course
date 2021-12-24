@@ -47,7 +47,7 @@ class BoolFiniteAutomaton:
                     self.edges[label][i, j] = True
 
     def get_intersection(self, other):
-        if not isinstance(other, BoolFiniteAutomaton):
+        if not isinstance(other, BoolFiniteAutomaton) or other.algo != self.algo:
             print("Illegal argument error: argument type mismatch", file=sys.stderr)
             exit(1)
         labels = set(self.edges.keys()).intersection(set(other.edges.keys()))
@@ -71,7 +71,7 @@ class BoolFiniteAutomaton:
                     self.get_number_of_state(u) * other.number_of_states
                     + other.get_number_of_state(v)
                 )
-        return self.create_bfa(intersection, start_states, final_states)
+        return self.create_bfa(intersection, start_states, final_states, self.algo)
 
     def transitive_closure(self) -> bsr_matrix:
         if len(self.edges) == 0:
@@ -79,6 +79,8 @@ class BoolFiniteAutomaton:
         if self.algo is Algo.SCIPY:
             res_m = sum(self.edges.values())
         else:
+            from pycubool import Matrix
+
             res_m = Matrix.empty(shape=(self.number_of_states, self.number_of_states))
             for bm in self.edges.values():
                 res_m.ewiseadd(bm, out=res_m)
