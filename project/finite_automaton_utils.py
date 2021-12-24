@@ -3,7 +3,6 @@ from enum import Enum
 
 from pyformlang.finite_automaton import FiniteAutomaton
 from scipy.sparse import kron, dok_matrix, bsr_matrix
-from pycubool import Matrix
 
 
 class Algo(Enum):
@@ -13,6 +12,8 @@ class Algo(Enum):
 
 class BoolFiniteAutomaton:
     def __init__(self, fa: FiniteAutomaton, algo: Algo = Algo.SCIPY):
+        if algo is Algo.PYCUBOOL:
+            from pycubool import Matrix
         self.start_states = fa.start_states
         self.final_states = fa.final_states
         self.number_of_states = len(fa.states)
@@ -34,7 +35,7 @@ class BoolFiniteAutomaton:
                 for v in edges.get(u).get(label):
                     j = self.__number_of_state.get(v)
                     if label not in self.edges.keys():
-                        if self.algo == Algo.SCIPY:
+                        if self.algo is Algo.SCIPY:
                             self.edges[label] = dok_matrix(
                                 (self.number_of_states, self.number_of_states),
                                 dtype=bool,
@@ -52,7 +53,7 @@ class BoolFiniteAutomaton:
         labels = set(self.edges.keys()).intersection(set(other.edges.keys()))
         intersection = dict()
         for label in labels:
-            if self.algo == Algo.SCIPY:
+            if self.algo is Algo.SCIPY:
                 intersection[label] = kron(self.edges[label], other.edges[label])
             else:
                 intersection[label] = self.edges[label].kronecker(other.edges[label])
@@ -75,7 +76,7 @@ class BoolFiniteAutomaton:
     def transitive_closure(self) -> bsr_matrix:
         if len(self.edges) == 0:
             return bsr_matrix((1, 1), dtype=bool)
-        if self.algo == Algo.SCIPY:
+        if self.algo is Algo.SCIPY:
             res_m = sum(self.edges.values())
         else:
             res_m = Matrix.empty(shape=(self.number_of_states, self.number_of_states))
@@ -83,7 +84,7 @@ class BoolFiniteAutomaton:
                 res_m.ewiseadd(bm, out=res_m)
         while True:
             old = res_m
-            if self.algo == Algo.SCIPY:
+            if self.algo is Algo.SCIPY:
                 res_m += res_m.dot(res_m)
                 if res_m.nnz == old.nnz:
                     break

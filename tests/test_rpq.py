@@ -31,3 +31,4 @@ def test_rpq(graph, pattern, start_states, final_states, expected):
         start_nodes=start_states,
         final_nodes=final_states,
     )
+    assert ans == expected
