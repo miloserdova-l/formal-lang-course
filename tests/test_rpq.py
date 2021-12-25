@@ -1,4 +1,4 @@
-import pytest
+import pytest, sys
 from pyformlang.regular_expression import PythonRegex
 
 from project import create_labeled_two_cycles_graph
@@ -24,11 +24,12 @@ def test_rpq(graph, pattern, start_states, final_states, expected):
     request = PythonRegex(pattern)
     ans = rpq(graph, request, start_nodes=start_states, final_nodes=final_states)
     assert ans == expected
-    ans = rpq(
-        graph,
-        request,
-        algo=Algo.PYCUBOOL,
-        start_nodes=start_states,
-        final_nodes=final_states,
-    )
-    assert ans == expected
+    if sys.platform == "linux":
+        ans = rpq(
+            graph,
+            request,
+            algo=Algo.PYCUBOOL,
+            start_nodes=start_states,
+            final_nodes=final_states,
+        )
+        assert ans == expected
