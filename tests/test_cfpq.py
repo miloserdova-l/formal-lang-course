@@ -1,9 +1,12 @@
+import sys
+
 import pytest
 from cfpq_data import labeled_cycle_graph
 from pyformlang.cfg import CFG
 
 from project import create_labeled_two_cycles_graph
 from project.cfpq.cfpq import cfpq_hellings, cfpq_matrix, cfpq_tensor
+from project.finite_automaton_utils import Algo
 
 
 @pytest.mark.parametrize(
@@ -79,3 +82,16 @@ def test_cfpq(cfg, graph, start_nodes, final_nodes, exp_ans):
     assert cfpq_hellings(graph, CFG.from_text(cfg), start_nodes, final_nodes) == exp_ans
     assert cfpq_matrix(graph, CFG.from_text(cfg), start_nodes, final_nodes) == exp_ans
     assert cfpq_tensor(graph, CFG.from_text(cfg), start_nodes, final_nodes) == exp_ans
+    if sys.platform == "linux":
+        assert (
+            cfpq_matrix(
+                graph, CFG.from_text(cfg), start_nodes, final_nodes, algo=Algo.PYCUBOOL
+            )
+            == exp_ans
+        )
+        assert (
+            cfpq_tensor(
+                graph, CFG.from_text(cfg), start_nodes, final_nodes, algo=Algo.PYCUBOOL
+            )
+            == exp_ans
+        )

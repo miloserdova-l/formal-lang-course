@@ -1,7 +1,13 @@
+import sys
 from scipy.sparse import dok_matrix
 
 from project.ecfg import ECFG
+from project.finite_automaton_utils import Algo
 from project.regex_utils import get_regex
+
+if sys.platform == "linux":
+    from pycubool import Matrix
+
 
 Box = dict
 
@@ -14,7 +20,7 @@ class RSM:
 
 
 class MatrixRSM(RSM):
-    def __init__(self, ecfg: ECFG):
+    def __init__(self, ecfg: ECFG, algo: Algo = Algo.SCIPY):
         super().__init__(ecfg)
         self.n = sum(len(body) + 1 for p in ecfg.productions.values() for body in p)
         self.m_boxes = dict()
@@ -29,7 +35,10 @@ class MatrixRSM(RSM):
                 self.heads[(i, i + len(simple_production))] = head.value
                 for b in simple_production:
                     m = self.m_boxes.get(
-                        b.value, dok_matrix((self.n, self.n), dtype=bool)
+                        b.value,
+                        dok_matrix((self.n, self.n), dtype=bool)
+                        if algo is Algo.SCIPY
+                        else Matrix.empty(shape=(self.n, self.n)),
                     )
                     m[i, i + 1] = True
                     self.m_boxes[b.value] = m

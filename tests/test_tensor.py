@@ -1,9 +1,12 @@
+import sys
+
 import pytest
 from cfpq_data import labeled_cycle_graph
 from pyformlang.cfg import CFG
 
 from project import create_labeled_two_cycles_graph
 from project.cfpq.tensor import tensor
+from project.finite_automaton_utils import Algo
 
 
 @pytest.mark.parametrize(
@@ -77,3 +80,5 @@ from project.cfpq.tensor import tensor
 )
 def test_tensor(cfg, graph, exp_ans):
     assert tensor(CFG.from_text(cfg), graph) == exp_ans
+    if sys.platform == "linux":
+        assert tensor(CFG.from_text(cfg), graph, Algo.PYCUBOOL) == exp_ans
