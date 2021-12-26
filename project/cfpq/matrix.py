@@ -52,7 +52,12 @@ def matrix(cfg: CFG, graph: MultiDiGraph, algo: Algo = Algo.SCIPY) -> set:
     while changing:
         changing = False
         for p in nonterm_prods:
-            m = result.get(p.head.value, dok_matrix((n, n), dtype=bool))
+            m = result.get(
+                p.head.value,
+                dok_matrix((n, n), dtype=bool)
+                if algo is Algo.SCIPY
+                else Matrix.empty(shape=(n, n)),
+            )
             old_nnz = m.nnz
             if algo is Algo.SCIPY:
                 m += dok_matrix(
