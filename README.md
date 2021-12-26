@@ -83,11 +83,159 @@
 - Создаем ноутбук, ссылка на ноутбук также размещается в [таблице](https://docs.google.com/spreadsheets/d/18DhYG5CuOrN4A5b5N7-mEDfDkc-7BuXF3Qsu6HD-lks/edit?usp=sharing) курса.
 - В `Google Colab` ноутбуке выполняется вся настройка, пишется код для экспериментов, подготовки отчетов и графиков.
 
-
 [Экспериментальное исследование алгоритмов решения задачи достижимости с КС ограничениями
 ](https://colab.research.google.com/drive/1D0tcQlcSlNW4jl3vqxJIw0Hxpd3wzy_c?usp=sharing)
 
 
+## Язык запросов к графам
+
+### Описание абстрактного синтаксиса языка
+
+```
+prog = List<stmt>
+
+stmt =
+    bind of var * expr
+  | print of expr
+
+val =
+    String of string
+  | Int of int
+  | Bool of bool
+  | Path of path
+  | List of string
+  | List of int
+  | List of bool
+
+expr =
+    Var of var                   // переменные
+  | Val of val                   // константы
+  | Set_start of Set<val> * expr // задать множество стартовых состояний
+  | Set_final of Set<val> * expr // задать множество финальных состояний
+  | Add_start of Set<val> * expr // добавить состояния в множество стартовых
+  | Add_final of Set<val> * expr // добавить состояния в множество финальных
+  | Get_start of expr            // получить множество стартовых состояний
+  | Get_final of expr            // получить множество финальных состояний
+  | Get_reachable of expr        // получить все пары достижимых вершин
+  | Get_vertices of expr         // получить все вершины
+  | Get_edges of expr            // получить все рёбра
+  | Get_labels of expr           // получить все метки
+  | Map of lambda * expr         // классический map
+  | Filter of lambda * expr      // классический filter
+  | Load of path                 // загрузка графа
+  | Intersect of expr * expr     // пересечение языков
+  | Concat of expr * expr        // конкатенация языков
+  | Union of expr * expr         // объединение языков
+  | Star of expr                 // замыкание языков (звезда Клини)
+
+lambda =
+    Lambda of List<var> * expr
+```
+
+### Описание конкретного синтаксиса языка
+```
+PROGRAM -> STMT ; PROGRAM | eps
+STMT -> VAR = EXPR | PRINT(EXPR)
+
+LOWERCASE -> [a-z]
+UPPERCASE -> [A-Z]
+DIGIT -> [0-9]
+
+INT -> 0 | [1-9] DIGIT*
+STRING -> (_ | . | LOWERCASE | UPPERCASE) (_ | . | LOWERCASE | UPPERCASE | DIGIT)*
+BOOL -> true | false
+PATH -> " (/ | _ | . | LOWERCASE | UPPERCASE | DIGIT)+ "
+
+VAR -> STRING
+VAL ->
+    INT
+    | " STRING "
+    | BOOL
+    | PATH
+    | LIST<INT>
+    | LIST<" STRING ">
+    | LIST<BOOL>
+
+SET ->
+    SET<INT>
+    | SET<" STRING ">
+    | range ( INT , INT )
+
+EXPR -> VAR
+EXPR -> VAL
+EXPR -> GRAPH
+GRAPH -> " STRING "
+GRAPH -> set_start(SET, GRAPH)
+GRAPH -> set_final(SET, GRAPH)
+GRAPH -> add_start(SET, GRAPH)
+GRAPH -> add_final(SET, GRAPH)
+
+EXPR -> VERTEX | VERTICES
+VERTEX -> INT
+VERTICES -> SET<VERTEX> | range ( INT , INT )
+VERTICES -> get_start(GRAPH)
+VERTICES -> get_final(SET, GRAPH)
+
+EXPR -> PAIR_OF_VERTICES
+PAIR_OF_VERTICES -> SET<(INT, INT)>
+PAIR_OF_VERTICES -> get_reachable(GRAPH)
+
+VERTICES -> get_vertices(GRAPH)
+
+EXPR -> EDGE | EDGES
+EDGE -> (INT, " STRING ", INT) | (INT, INT, INT)
+EDGES -> SET<EDGE>
+EDGES -> get_edges(GRAPH)
+
+EXPR -> LABELS
+LABELS -> SET<INT> | SET<" STRING ">
+LABELS -> get_labels(GRAPH)
+
+EXPR -> map(LAMBDA, EXPR)
+EXPR -> filter(LAMBDA, EXPR)
+GRAPH -> load(" PATH ")
+GRAPH -> intersect(GRAPH, GRAPH)
+GRAPH -> concat(GRAPH, GRAPH)
+GRAPH -> union(GRAPH, GRAPH)
+GRAPH -> star(GRAPH, GRAPH)
+
+LAMBDA -> (LIST<VAR> -> [BOOL_EXPR | EXPR])
+BOOL_EXPR ->
+    BOOL_EXPR or BOOL_EXPR
+    | BOOL_EXPR and BOOL_EXPR
+    | not BOOL_EXPR
+    | BOOL
+    | has_label(EDGE, " STRING ")
+    | is_start(VERTEX)
+    | is_final(VERTEX)
+    | X in SET<X>
+
+LIST<X> -> list(X [, X]*) | list()
+SET<X> -> set(X [, X]*) | set()
+```
+
+### Пример программы
+```
+g = load("wine")
+
+h = set_start(set_final(get_vertices(g), g)), range(1, 100))
+
+l1 = union("l1", "l2")
+
+q1 = star(union("type", l1))
+q2 = concat("sub_class_of", l1)
+
+res1 = intersect(g, q1)
+res2 = intersect(g, q2)
+
+print(res1)
+
+s = get_start(g)
+
+vertices = filter((list(v) -> v in s), get_edges(res1))
+
+print(vertices)
+```
 ## Структура репозитория
 
 ```text
