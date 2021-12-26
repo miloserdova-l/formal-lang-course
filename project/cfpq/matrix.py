@@ -54,21 +54,21 @@ def matrix(cfg: CFG, graph: MultiDiGraph, algo: Algo = Algo.SCIPY) -> set:
         for p in nonterm_prods:
             m = result.get(p.head.value, dok_matrix((n, n), dtype=bool))
             old_nnz = m.nnz
-            m += dok_matrix(
-                result.get(
-                    p.body[0].value,
-                    dok_matrix((n, n), dtype=bool)
-                    if algo is Algo.SCIPY
-                    else Matrix.empty(shape=(n, n)),
-                ).dot(
-                    result.get(
-                        p.body[1].value,
-                        dok_matrix((n, n), dtype=bool)
-                        if algo is Algo.SCIPY
-                        else Matrix.empty(shape=(n, n)),
+            if algo is Algo.SCIPY:
+                m += dok_matrix(
+                    result.get(p.body[0].value, dok_matrix((n, n), dtype=bool),).dot(
+                        result.get(
+                            p.body[1].value,
+                            dok_matrix((n, n), dtype=bool),
+                        ),
                     )
                 )
-            )
+            else:
+                result.get(p.body[0].value, Matrix.empty((n, n))).mxm(
+                    result.get(p.body[1].value, Matrix.empty((n, n))),
+                    out=m,
+                    accumulate=True,
+                )
             new_nnz = m.nnz if algo is Algo.SCIPY else m.nvals
             result[p.head.value] = m
             changing = max(changing, old_nnz != new_nnz)
