@@ -58,7 +58,7 @@ def matrix(cfg: CFG, graph: MultiDiGraph, algo: Algo = Algo.SCIPY) -> set:
                 if algo is Algo.SCIPY
                 else Matrix.empty(shape=(n, n)),
             )
-            old_nnz = m.nnz
+            old_nnz = m.nnz if algo is Algo.SCIPY else m.nvals
             if algo is Algo.SCIPY:
                 m += dok_matrix(
                     result.get(p.body[0].value, dok_matrix((n, n), dtype=bool),).dot(
