@@ -144,3 +144,10 @@ _minted-presentation/
 *.fdb_latexmk
 *.fls
 *.gz
+/project/gql/GQL.interp
+/project/gql/GQL.tokens
+/project/gql/GQLLexer.interp
+/project/gql/GQLLexer.py
+/project/gql/GQLLexer.tokens
+/project/gql/GQLListener.py
+/project/gql/GQLParser.py
