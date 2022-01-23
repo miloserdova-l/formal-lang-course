@@ -1,6 +1,10 @@
 import pytest
+import platform
 
-from project.gql.parser import parse
+if platform.system() == "Windows":
+    pytest.skip("skipping", allow_module_level=True)
+else:
+    from project.gql.parser import parse
 
 
 @pytest.mark.parametrize(
