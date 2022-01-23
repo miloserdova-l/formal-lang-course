@@ -70,7 +70,7 @@ def test_val(text, accept):
 def test_graph(text, accept):
     parser = parse(text)
     parser.removeErrorListeners()
-    _ = parser.graph()
+    _ = parser.graph_()
     act = parser.getNumberOfSyntaxErrors() == 0
     assert act == accept
 

@@ -21,7 +21,7 @@ var : VAR;
 
 expr : var
      | val
-     | graph
+     | graph_
      | vertices
      | edges
      | labels
@@ -37,7 +37,7 @@ expr : var
      | LP expr RP
      ;
 
-graph : string
+graph_ : string
       | set_start
       | set_final
       | add_start
@@ -45,15 +45,15 @@ graph : string
       | load_graph
       | cfg
       | intersect
-      | LP graph RP
+      | LP graph_ RP
       ;
 
-intersect : INTERSECT (graph | var) WITH (graph | var) ;
+intersect : INTERSECT (graph_ | var) WITH (graph_ | var) ;
 load_graph : LOAD GRAPH (path | string);
-set_start : SET START OF (graph | var) TO (vertices | var);
-set_final : SET FINAL OF (graph | var) TO (vertices | var);
-add_start : ADD START OF (graph | var) TO (vertices | var);
-add_final : ADD FINAL OF (graph | var) TO (vertices | var);
+set_start : SET START OF (graph_ | var) TO (vertices | var);
+set_final : SET FINAL OF (graph_ | var) TO (vertices | var);
+add_start : ADD START OF (graph_ | var) TO (vertices | var);
+add_final : ADD FINAL OF (graph_ | var) TO (vertices | var);
 cfg : CFG;
 
 vertices : vertex
@@ -71,10 +71,10 @@ vertex : INT;
 vertices_set : LCB (INT COMMA)* (INT)? RCB
              | vertices_range;
 vertices_range : LCB INT DOT DOT INT RCB;
-get_final : GET FINAL VERTICES FROM (graph | var);
-get_start : GET START VERTICES FROM (graph | var);
-get_vertices : GET VERTICES FROM (graph | var);
-get_reachable : GET REACHABLE VERTICES FROM (graph | var);
+get_final : GET FINAL VERTICES FROM (graph_ | var);
+get_start : GET START VERTICES FROM (graph_ | var);
+get_vertices : GET VERTICES FROM (graph_ | var);
+get_reachable : GET REACHABLE VERTICES FROM (graph_ | var);
 
 edges : edge
       | edges_set
@@ -83,7 +83,7 @@ edges : edge
 edge : LP vertex COMMA label COMMA vertex RP
      | LP vertex COMMA vertex RP;
 
-get_edges : GET EDGES FROM (graph | var);
+get_edges : GET EDGES FROM (graph_ | var);
 edges_set : LCB (edge COMMA)* (edge)? RCB;
 
 labels : label
@@ -92,7 +92,7 @@ labels : label
 
 label : string;
 labels_set : LCB (STRING COMMA)* (STRING)? RCB;
-get_labels : GET LABELS FROM (graph | var);
+get_labels : GET LABELS FROM (graph_ | var);
 
 mapping : MAP anfunc expr;
 filtering : FILTER anfunc expr;
