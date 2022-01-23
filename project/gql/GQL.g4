@@ -54,6 +54,7 @@ set_start : SET START OF (graph_ | var) TO (vertices | var);
 set_final : SET FINAL OF (graph_ | var) TO (vertices | var);
 add_start : ADD START OF (graph_ | var) TO (vertices | var);
 add_final : ADD FINAL OF (graph_ | var) TO (vertices | var);
+
 cfg : CFG;
 
 vertices : vertex
@@ -71,6 +72,7 @@ vertex : INT;
 vertices_set : LCB (INT COMMA)* (INT)? RCB
              | vertices_range;
 vertices_range : LCB INT DOT DOT INT RCB;
+
 get_final : GET FINAL VERTICES FROM (graph_ | var);
 get_start : GET START VERTICES FROM (graph_ | var);
 get_vertices : GET VERTICES FROM (graph_ | var);
@@ -84,6 +86,7 @@ edge : LP vertex COMMA label COMMA vertex RP
      | LP vertex COMMA vertex RP;
 
 get_edges : GET EDGES FROM (graph_ | var);
+
 edges_set : LCB (edge COMMA)* (edge)? RCB;
 
 labels : label

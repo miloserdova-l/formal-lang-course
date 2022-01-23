@@ -10,6 +10,7 @@ from project.gql.GQLListener import GQLListener
 __all__ = ["parse", "accept", "generate_dot"]
 
 
+
 def parse(text: str) -> GQLParser:
     input_stream = InputStream(text)
     lexer = GQLLexer(input_stream)
