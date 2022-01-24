@@ -51,5 +51,11 @@ jobs:
             python -m pip install --upgrade pip
             python -m pip install pycubool
 
+      - name: Install pycubool
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        run: |
+            python -m pip install --upgrade pip
+            python -m pip install pycubool
+
       - name: Run tests
         run: python ./scripts/run_tests.py

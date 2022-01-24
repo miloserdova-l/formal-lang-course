@@ -83,6 +83,10 @@
 - Создаем ноутбук, ссылка на ноутбук также размещается в [таблице](https://docs.google.com/spreadsheets/d/18DhYG5CuOrN4A5b5N7-mEDfDkc-7BuXF3Qsu6HD-lks/edit?usp=sharing) курса.
 - В `Google Colab` ноутбуке выполняется вся настройка, пишется код для экспериментов, подготовки отчетов и графиков.
 
+[Экспериментальное исследование алгоритмов решения задачи достижимости с КС ограничениями
+](https://colab.research.google.com/drive/1D0tcQlcSlNW4jl3vqxJIw0Hxpd3wzy_c?usp=sharing)
+
+
 ## Язык запросов к графам
 
 ### Описание абстрактного синтаксиса языка
@@ -232,7 +236,6 @@ vertices = filter((list(v) -> v in s), get_edges(res1))
 
 print(vertices)
 ```
-
 ## Структура репозитория
 
 ```text
@@ -246,6 +249,7 @@ print(vertices)
 ├── README.md - основная информация о проекте
 └── requirements.txt - зависимости для настройки репозитория
 ```
+
 
 ## Контакты
 
