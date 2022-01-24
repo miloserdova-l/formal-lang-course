@@ -250,6 +250,7 @@ print(vertices)
 └── requirements.txt - зависимости для настройки репозитория
 ```
 
+
 ## Контакты
 
 - Семен Григорьев [@gsvgit](https://github.com/gsvgit)
